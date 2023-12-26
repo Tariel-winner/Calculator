@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"strconv"
@@ -55,9 +56,10 @@ func calculate(a, b int, operator string) (int, error) {
 }
 
 func main() {
+	scanner := bufio.NewScanner(os.Stdin)
 	fmt.Print("Введите выражение (например, 5 + 3): ")
-	var expression string
-	fmt.Scanln(&expression)
+	scanner.Scan()
+	expression := scanner.Text()
 
 	parts := strings.Fields(expression)
 	if len(parts) != 3 {
