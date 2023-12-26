@@ -55,12 +55,18 @@ func calculate(a, b int, operator string) (int, error) {
 }
 
 func main() {
-	if len(os.Args) < 4 {
-		fmt.Println("Использование: калькулятор <число> <оператор> <число>")
+	fmt.Print("Введите выражение (например, 5 + 3): ")
+	var expression string
+	fmt.Scanln(&expression)
+
+	parts := strings.Fields(expression)
+	if len(parts) != 3 {
+		fmt.Println("Ошибка: неверный формат выражения")
 		os.Exit(1)
 	}
 
-	aStr, operator, bStr := os.Args[1], os.Args[2], os.Args[3]
+	aStr, operator, bStr := parts[0], parts[1], parts[2]
+
 	aStrUpper, bStrUpper := strings.ToUpper(aStr), strings.ToUpper(bStr)
 
 	a, err := strconv.Atoi(aStr)
