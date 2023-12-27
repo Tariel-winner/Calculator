@@ -69,26 +69,21 @@ func main() {
 
 	aStr, operator, bStr := parts[0], parts[1], parts[2]
 
-	aStrUpper, bStrUpper := strings.ToUpper(aStr), strings.ToUpper(bStr)
-
 	a, err := strconv.Atoi(aStr)
 	if err != nil {
-		returnA := romanToArabic(aStrUpper)
-		if returnA == 0 {
-			fmt.Println("Ошибка: неверные типы чисел")
-			os.Exit(1)
-		}
-		a = returnA
+		fmt.Println("Ошибка: неверные типы чисел")
+		os.Exit(1)
 	}
 
 	b, err := strconv.Atoi(bStr)
 	if err != nil {
-		returnB := romanToArabic(bStrUpper)
-		if returnB == 0 {
-			fmt.Println("Ошибка: неверные типы чисел")
-			os.Exit(1)
-		}
-		b = returnB
+		fmt.Println("Ошибка: неверные типы чисел")
+		os.Exit(1)
+	}
+
+	if a < 1 || a > 10 || b < 1 || b > 10 {
+		fmt.Println("Ошибка: числа должны быть от 1 до 10 включительно")
+		os.Exit(1)
 	}
 
 	result, err := calculate(a, b, operator)
@@ -97,10 +92,5 @@ func main() {
 		os.Exit(1)
 	}
 
-	if aStrUpper == aStr && bStrUpper == bStr {
-		resultStr := arabicToRoman(result)
-		fmt.Printf("Результат: %s\n", resultStr)
-	} else {
-		fmt.Printf("Результат: %d\n", result)
-	}
+	fmt.Printf("Результат: %d\n", result)
 }
