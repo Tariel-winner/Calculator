@@ -67,30 +67,45 @@ func main() {
 		os.Exit(1)
 	}
 
-	aStr, operator, bStr := parts[0], parts[1], parts[2]
+	var a, b int
+	var err error
 
-	a, err := strconv.Atoi(aStr)
-	if err != nil {
-		fmt.Println("Ошибка: неверные типы чисел")
-		os.Exit(1)
+	// Check if the input is in Roman numeral format
+	if strings.ToUpper(parts[0]) == parts[0] && strings.ToUpper(parts[2]) == parts[2] {
+		// Convert Roman numerals to Arabic numerals
+		a = romanToArabic(parts[0])
+		b = romanToArabic(parts[2])
+	} else {
+		// Convert Arabic numerals if not in Roman numeral format
+		a, err = strconv.Atoi(parts[0])
+		if err != nil {
+			fmt.Println("Ошибка: неверные типы чисел")
+			os.Exit(1)
+		}
+
+		b, err = strconv.Atoi(parts[2])
+		if err != nil {
+			fmt.Println("Ошибка: неверные типы чисел")
+			os.Exit(1)
+		}
+
+		if a < 1 || a > 10 || b < 1 || b > 10 {
+			fmt.Println("Ошибка: числа должны быть от 1 до 10 включительно")
+			os.Exit(1)
+		}
 	}
 
-	b, err := strconv.Atoi(bStr)
-	if err != nil {
-		fmt.Println("Ошибка: неверные типы чисел")
-		os.Exit(1)
-	}
-
-	if a < 1 || a > 10 || b < 1 || b > 10 {
-		fmt.Println("Ошибка: числа должны быть от 1 до 10 включительно")
-		os.Exit(1)
-	}
-
-	result, err := calculate(a, b, operator)
+	result, err := calculate(a, b, parts[1])
 	if err != nil {
 		fmt.Printf("Ошибка: %s\n", err)
 		os.Exit(1)
 	}
 
-	fmt.Printf("Результат: %d\n", result)
+	// Check if the input is in Roman numeral format to display the result accordingly
+	if strings.ToUpper(parts[0]) == parts[0] && strings.ToUpper(parts[2]) == parts[2] {
+		resultStr := arabicToRoman(result)
+		fmt.Printf("Результат: %s\n", resultStr)
+	} else {
+		fmt.Printf("Результат: %d\n", result)
+	}
 }
