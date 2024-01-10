@@ -78,27 +78,28 @@ func main() {
 	var a, b int
 	var err error
 
-	// Check if the input is in Roman numeral format
+	// Проверка, что числа в диапазоне от 1 до 10 включительно
+	if a, err = strconv.Atoi(parts[0]); err != nil || a < 1 || a > 10 {
+		fmt.Println("Ошибка: неверные типы чисел")
+		os.Exit(1)
+	}
+
+	if b, err = strconv.Atoi(parts[2]); err != nil || b < 1 || b > 10 {
+		fmt.Println("Ошибка: неверные типы чисел")
+		os.Exit(1)
+	}
+
+	// Проверка, что числа одного формата
 	if strings.ToUpper(parts[0]) == parts[0] && strings.ToUpper(parts[2]) == parts[2] {
-		// Convert Roman numerals to Arabic numerals
-		a = romanToArabic(parts[0])
-		b = romanToArabic(parts[2])
+		// Если оба числа римские, но операция арабская, выдайте ошибку
+		if _, err := strconv.Atoi(parts[1]); err == nil {
+			fmt.Println("Ошибка: числа разного формата")
+			os.Exit(1)
+		}
 	} else {
-		// Convert Arabic numerals if not in Roman numeral format
-		a, err = strconv.Atoi(parts[0])
-		if err != nil {
-			fmt.Println("Ошибка: неверные типы чисел")
-			os.Exit(1)
-		}
-
-		b, err = strconv.Atoi(parts[2])
-		if err != nil {
-			fmt.Println("Ошибка: неверные типы чисел")
-			os.Exit(1)
-		}
-
-		if a < 1 || a > 10 || b < 1 || b > 10 {
-			fmt.Println("Ошибка: числа должны быть от 1 до 10 включительно")
+		// Если числа арабские, но операция римская, выдайте ошибку
+		if _, err := strconv.Atoi(parts[1]); err != nil {
+			fmt.Println("Ошибка: числа разного формата")
 			os.Exit(1)
 		}
 	}
@@ -109,7 +110,13 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Check if the input is in Roman numeral format to display the result accordingly
+	// Проверка, что результат в правильном диапазоне
+	if result < 1 || result > 10 {
+		fmt.Println("Ошибка: результат должен быть от 1 до 10 включительно")
+		os.Exit(1)
+	}
+
+	// Проверка, какой формат ввода и вывод результата соответствующим образом
 	if strings.ToUpper(parts[0]) == parts[0] && strings.ToUpper(parts[2]) == parts[2] {
 		resultStr := arabicToRoman(result)
 		fmt.Printf("Результат: %s\n", resultStr)
