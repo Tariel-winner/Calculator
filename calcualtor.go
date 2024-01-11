@@ -23,7 +23,7 @@ func arabicToRoman(num int) string {
 	return romanNum
 }
 
-func romanToArabic(s string) int {
+func romanToArabic(s string) (int, error) {
 	romanDict := map[string]int{"I": 1, "IV": 4, "V": 5, "IX": 9, "X": 10, "XL": 40, "L": 50, "XC": 90, "C": 100, "CD": 400, "D": 500, "CM": 900, "M": 1000}
 	result := 0
 	for i := 0; i < len(s); i++ {
@@ -34,7 +34,7 @@ func romanToArabic(s string) int {
 			result += romanDict[string(s[i])]
 		}
 	}
-	return result
+	return result, nil
 }
 
 func calculate(a, b int, operator string) (int, error) {
@@ -78,30 +78,35 @@ func main() {
 	var a, b int
 	var err error
 
-	// Проверка, что числа в диапазоне от 1 до 10 включительно
 	if a, err = strconv.Atoi(parts[0]); err != nil || a < 1 || a > 10 {
-		fmt.Println("Ошибка: неверные типы чисел")
-		os.Exit(1)
+		if a, err = romanToArabic(parts[0]); err != nil {
+			fmt.Println("Ошибка: неверные типы чисел")
+			os.Exit(1)
+		}
 	}
 
 	if b, err = strconv.Atoi(parts[2]); err != nil || b < 1 || b > 10 {
-		fmt.Println("Ошибка: неверные типы чисел")
-		os.Exit(1)
+		if b, err = romanToArabic(parts[2]); err != nil {
+			fmt.Println("Ошибка: неверные типы чисел")
+			os.Exit(1)
+		}
 	}
 
-	// Проверка, что числа одного формата
-	if strings.ToUpper(parts[0]) == parts[0] && strings.ToUpper(parts[2]) == parts[2] {
-		// Если оба числа римские, но операция арабская, выдайте ошибку
-		if _, err := strconv.Atoi(parts[1]); err == nil {
-			fmt.Println("Ошибка: числа разного формата")
-			os.Exit(1)
+	if (a >= 1 && a <= 10) && (b >= 1 && b <= 10) {
+		if strings.ToUpper(parts[0]) == parts[0] && strings.ToUpper(parts[2]) == parts[2] {
+			if _, err := strconv.Atoi(parts[1]); err == nil {
+				fmt.Println("Ошибка: числа разного формата")
+				os.Exit(1)
+			}
+		} else {
+			if _, err := strconv.Atoi(parts[1]); err != nil {
+				fmt.Println("Ошибка: числа разного формата")
+				os.Exit(1)
+			}
 		}
 	} else {
-		// Если числа арабские, но операция римская, выдайте ошибку
-		if _, err := strconv.Atoi(parts[1]); err != nil {
-			fmt.Println("Ошибка: числа разного формата")
-			os.Exit(1)
-		}
+		fmt.Println("Ошибка: числа должны быть от 1 до 10 включительно")
+		os.Exit(1)
 	}
 
 	result, err := calculate(a, b, parts[1])
@@ -110,13 +115,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Проверка, что результат в правильном диапазоне
 	if result < 1 || result > 10 {
 		fmt.Println("Ошибка: результат должен быть от 1 до 10 включительно")
 		os.Exit(1)
 	}
 
-	// Проверка, какой формат ввода и вывод результата соответствующим образом
 	if strings.ToUpper(parts[0]) == parts[0] && strings.ToUpper(parts[2]) == parts[2] {
 		resultStr := arabicToRoman(result)
 		fmt.Printf("Результат: %s\n", resultStr)
