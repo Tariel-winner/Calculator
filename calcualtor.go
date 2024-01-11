@@ -54,9 +54,6 @@ func calculate(a, b int, operator string) (int, error) {
 			return 0, fmt.Errorf("деление на ноль")
 		}
 		result := a / b
-		if result <= 0 {
-			return 0, fmt.Errorf("результат меньше или равен нулю")
-		}
 		return result, nil
 	default:
 		return 0, fmt.Errorf("недопустимая арифметическая операция")
@@ -78,14 +75,30 @@ func main() {
 	var a, b int
 	var err error
 
-	if a, err = strconv.Atoi(parts[0]); err != nil || a < 1 || a > 10 {
+	if a, err = strconv.Atoi(parts[0]); err != nil {
+		// Проверяем, если это переменная X
+		if strings.ToUpper(parts[0]) != "X" {
+			fmt.Println("Ошибка: неверные типы чисел")
+			os.Exit(1)
+		}
+		// Предполагаем, что X всегда будет 10
+		a = 10
+	} else if a < 1 || a > 10 {
 		if a, err = romanToArabic(parts[0]); err != nil {
 			fmt.Println("Ошибка: неверные типы чисел")
 			os.Exit(1)
 		}
 	}
 
-	if b, err = strconv.Atoi(parts[2]); err != nil || b < 1 || b > 10 {
+	if b, err = strconv.Atoi(parts[2]); err != nil {
+		// Проверяем, если это переменная X
+		if strings.ToUpper(parts[2]) != "X" {
+			fmt.Println("Ошибка: неверные типы чисел")
+			os.Exit(1)
+		}
+		// Предполагаем, что X всегда будет 10
+		b = 10
+	} else if b < 1 || b > 10 {
 		if b, err = romanToArabic(parts[2]); err != nil {
 			fmt.Println("Ошибка: неверные типы чисел")
 			os.Exit(1)
@@ -115,14 +128,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	if result < 1 || result > 10 {
-		fmt.Println("Ошибка: результат должен быть от 1 до 10 включительно")
-		os.Exit(1)
-	}
-
 	if strings.ToUpper(parts[0]) == parts[0] && strings.ToUpper(parts[2]) == parts[2] {
-		resultStr := arabicToRoman(result)
-		fmt.Printf("Результат: %s\n", resultStr)
+		fmt.Printf("Результат: %s\n", arabicToRoman(result))
 	} else {
 		fmt.Printf("Результат: %d\n", result)
 	}
