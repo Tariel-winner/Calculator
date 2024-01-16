@@ -129,8 +129,8 @@ func main() {
 	}
 
 	if strings.ToUpper(parts[0]) == parts[0] && strings.ToUpper(parts[2]) == parts[2] {
-		fmt.Printf("Результат: %s\n", arabicToRoman(result))
-	} else {
 		fmt.Printf("Результат: %d\n", result)
+	} else {
+		fmt.Printf("Результат: %s\n", arabicToRoman(result))
 	}
 }
