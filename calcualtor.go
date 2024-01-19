@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"unicode"
 )
 
 func arabicToRoman(num int) string {
@@ -54,10 +55,22 @@ func calculate(a, b int, operator string) (int, error) {
 			return 0, fmt.Errorf("деление на ноль")
 		}
 		result := a / b
+		if result <= 0 {
+			return 0, fmt.Errorf("результат меньше или равен нулю")
+		}
 		return result, nil
 	default:
 		return 0, fmt.Errorf("недопустимая арифметическая операция")
 	}
+}
+
+func isArabic(input string) bool {
+	for _, char := range input {
+		if !unicode.IsDigit(char) {
+			return false
+		}
+	}
+	return true
 }
 
 func main() {
@@ -66,7 +79,17 @@ func main() {
 	scanner.Scan()
 	expression := scanner.Text()
 
-	parts := strings.Fields(expression)
+	var parts []string
+
+	// Check if the expression contains spaces
+	if strings.Contains(expression, " ") {
+		// Split the expression into parts using spaces
+		parts = strings.Fields(expression)
+	} else {
+		// Manually extract operands and operator
+		parts = []string{string(expression[0]), string(expression[1]), string(expression[2])}
+	}
+
 	if len(parts) != 3 {
 		fmt.Println("Ошибка: неверный формат выражения")
 		os.Exit(1)
@@ -75,51 +98,28 @@ func main() {
 	var a, b int
 	var err error
 
-	if a, err = strconv.Atoi(parts[0]); err != nil {
-		// Проверяем, если это переменная X
-		if strings.ToUpper(parts[0]) != "X" {
+	// Check if both operands are Arabic numerals
+	if isArabic(parts[0]) && isArabic(parts[2]) {
+		if a, err = strconv.Atoi(parts[0]); err != nil || a < 1 || a > 10 {
 			fmt.Println("Ошибка: неверные типы чисел")
 			os.Exit(1)
 		}
-		// Предполагаем, что X всегда будет 10
-		a = 10
-	} else if a < 1 || a > 10 {
+
+		if b, err = strconv.Atoi(parts[2]); err != nil || b < 1 || b > 10 {
+			fmt.Println("Ошибка: неверные типы чисел")
+			os.Exit(1)
+		}
+	} else {
+		// If not Arabic numerals, try to convert to Roman numerals
 		if a, err = romanToArabic(parts[0]); err != nil {
 			fmt.Println("Ошибка: неверные типы чисел")
 			os.Exit(1)
 		}
-	}
 
-	if b, err = strconv.Atoi(parts[2]); err != nil {
-		// Проверяем, если это переменная X
-		if strings.ToUpper(parts[2]) != "X" {
-			fmt.Println("Ошибка: неверные типы чисел")
-			os.Exit(1)
-		}
-		// Предполагаем, что X всегда будет 10
-		b = 10
-	} else if b < 1 || b > 10 {
 		if b, err = romanToArabic(parts[2]); err != nil {
 			fmt.Println("Ошибка: неверные типы чисел")
 			os.Exit(1)
 		}
-	}
-
-	if (a >= 1 && a <= 10) && (b >= 1 && b <= 10) {
-		if strings.ToUpper(parts[0]) == parts[0] && strings.ToUpper(parts[2]) == parts[2] {
-			if _, err := strconv.Atoi(parts[1]); err == nil {
-				fmt.Println("Ошибка: числа разного формата")
-				os.Exit(1)
-			}
-		} else {
-			if _, err := strconv.Atoi(parts[1]); err != nil {
-				fmt.Println("Ошибка: числа разного формата")
-				os.Exit(1)
-			}
-		}
-	} else {
-		fmt.Println("Ошибка: числа должны быть от 1 до 10 включительно")
-		os.Exit(1)
 	}
 
 	result, err := calculate(a, b, parts[1])
@@ -128,9 +128,13 @@ func main() {
 		os.Exit(1)
 	}
 
-	if strings.ToUpper(parts[0]) == parts[0] && strings.ToUpper(parts[2]) == parts[2] {
+	// Check if the result should be displayed as Arabic or Roman numeral
+	if isArabic(parts[0]) && isArabic(parts[2]) {
+		// If both operands are Arabic numerals, display the result as Arabic numeral
 		fmt.Printf("Результат: %d\n", result)
 	} else {
-		fmt.Printf("Результат: %s\n", arabicToRoman(result))
+		// If operands are Roman numerals, display the result as Roman numeral
+		resultStr := arabicToRoman(result)
+		fmt.Printf("Результат: %s\n", resultStr)
 	}
 }
