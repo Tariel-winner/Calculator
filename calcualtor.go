@@ -38,29 +38,29 @@ func romanToArabic(s string) (int, error) {
 	return result, nil
 }
 
-func calculate(a, b int, operator string) (int, error) {
+func calculate(a, b int, operator string) int {
 	switch operator {
 	case "+":
-		return a + b, nil
+		return a + b
 	case "-":
 		result := a - b
 		if result <= 0 {
-			return 0, fmt.Errorf("результат меньше или равен нулю")
+			panic(fmt.Errorf("результат меньше или равен нулю"))
 		}
-		return result, nil
+		return result
 	case "*":
-		return a * b, nil
+		return a * b
 	case "/":
 		if b == 0 {
-			return 0, fmt.Errorf("деление на ноль")
+			panic(fmt.Errorf("деление на ноль"))
 		}
 		result := a / b
 		if result <= 0 {
-			return 0, fmt.Errorf("результат меньше или равен нулю")
+			panic(fmt.Errorf("результат меньше или равен нулю"))
 		}
-		return result, nil
+		return result
 	default:
-		return 0, fmt.Errorf("недопустимая арифметическая операция")
+		panic(fmt.Errorf("недопустимая арифметическая операция"))
 	}
 }
 
@@ -91,8 +91,7 @@ func main() {
 	}
 
 	if len(parts) != 3 {
-		fmt.Println("Ошибка: неверный формат выражения")
-		os.Exit(1)
+		panic(fmt.Errorf("неверный формат выражения"))
 	}
 
 	var a, b int
@@ -101,32 +100,24 @@ func main() {
 	// Check if both operands are Arabic numerals
 	if isArabic(parts[0]) && isArabic(parts[2]) {
 		if a, err = strconv.Atoi(parts[0]); err != nil || a < 1 || a > 10 {
-			fmt.Println("Ошибка: неверные типы чисел")
-			os.Exit(1)
+			panic(fmt.Errorf("неверные типы чисел"))
 		}
 
 		if b, err = strconv.Atoi(parts[2]); err != nil || b < 1 || b > 10 {
-			fmt.Println("Ошибка: неверные типы чисел")
-			os.Exit(1)
+			panic(fmt.Errorf("неверные типы чисел"))
 		}
 	} else {
 		// If not Arabic numerals, try to convert to Roman numerals
 		if a, err = romanToArabic(parts[0]); err != nil {
-			fmt.Println("Ошибка: неверные типы чисел")
-			os.Exit(1)
+			panic(fmt.Errorf("неверные типы чисел"))
 		}
 
 		if b, err = romanToArabic(parts[2]); err != nil {
-			fmt.Println("Ошибка: неверные типы чисел")
-			os.Exit(1)
+			panic(fmt.Errorf("неверные типы чисел"))
 		}
 	}
 
-	result, err := calculate(a, b, parts[1])
-	if err != nil {
-		fmt.Printf("Ошибка: %s\n", err)
-		os.Exit(1)
-	}
+	result := calculate(a, b, parts[1])
 
 	// Check if the result should be displayed as Arabic or Roman numeral
 	if isArabic(parts[0]) && isArabic(parts[2]) {
