@@ -41,7 +41,11 @@ func romanToArabic(s string) (int, error) {
 func calculate(a, b int, operator string) int {
 	switch operator {
 	case "+":
-		return a + b
+		result := a + b
+		if result < 1 || result > 10 {
+			panic(fmt.Errorf("результат должен быть от 1 до 10 включительно"))
+		}
+		return result
 	case "-":
 		result := a - b
 		if result <= 0 {
@@ -49,14 +53,18 @@ func calculate(a, b int, operator string) int {
 		}
 		return result
 	case "*":
-		return a * b
+		result := a * b
+		if result < 1 || result > 10 {
+			panic(fmt.Errorf("результат должен быть от 1 до 10 включительно"))
+		}
+		return result
 	case "/":
 		if b == 0 {
 			panic(fmt.Errorf("деление на ноль"))
 		}
 		result := a / b
-		if result <= 0 {
-			panic(fmt.Errorf("результат меньше или равен нулю"))
+		if result < 1 || result > 10 {
+			panic(fmt.Errorf("результат должен быть от 1 до 10 включительно"))
 		}
 		return result
 	default:
@@ -67,6 +75,15 @@ func calculate(a, b int, operator string) int {
 func isArabic(input string) bool {
 	for _, char := range input {
 		if !unicode.IsDigit(char) {
+			return false
+		}
+	}
+	return true
+}
+
+func isRoman(input string) bool {
+	for _, char := range input {
+		if unicode.IsDigit(char) {
 			return false
 		}
 	}
@@ -106,8 +123,8 @@ func main() {
 		if b, err = strconv.Atoi(parts[2]); err != nil || b < 1 || b > 10 {
 			panic(fmt.Errorf("неверные типы чисел"))
 		}
-	} else {
-		// If not Arabic numerals, try to convert to Roman numerals
+	} else if isRoman(parts[0]) && isRoman(parts[2]) {
+		// If both operands are Roman numerals, convert to Arabic numerals
 		if a, err = romanToArabic(parts[0]); err != nil {
 			panic(fmt.Errorf("неверные типы чисел"))
 		}
@@ -115,6 +132,9 @@ func main() {
 		if b, err = romanToArabic(parts[2]); err != nil {
 			panic(fmt.Errorf("неверные типы чисел"))
 		}
+	} else {
+		// If operands are of different types, panic
+		panic(fmt.Errorf("смешивание арабских и римских цифр в выражении"))
 	}
 
 	result := calculate(a, b, parts[1])
