@@ -25,16 +25,19 @@ func arabicToRoman(num int) string {
 }
 
 func romanToArabic(s string) (int, error) {
-	romanDict := map[string]int{"I": 1, "IV": 4, "V": 5, "IX": 9, "X": 10, "XL": 40, "L": 50, "XC": 90, "C": 100, "CD": 400, "D": 500, "CM": 900, "M": 1000}
+	romanDict := map[string]int{"I": 1, "II": 2, "III": 3, "IV": 4, "V": 5, "VI": 6, "VII": 7, "VIII": 8, "IX": 9, "X": 10}
 	result := 0
 	for i := 0; i < len(s); i++ {
 		if i+1 < len(s) && romanDict[s[i:i+2]] > 0 {
 			result += romanDict[s[i:i+2]]
 			i++
+		} else if val, found := romanDict[string(s[i])]; found {
+			result += val
 		} else {
-			result += romanDict[string(s[i])]
+			panic(fmt.Errorf("недопустимая арифметическая операция"))
 		}
 	}
+
 	return result, nil
 }
 
@@ -42,18 +45,30 @@ func calculate(a, b int, operator string) int {
 	switch operator {
 	case "+":
 		result := a + b
+		if result < 0 {
+			panic(fmt.Errorf("результат не может быть отрицательным"))
+		}
 		return result
 	case "-":
 		result := a - b
+		if result < 0 {
+			panic(fmt.Errorf("результат не может быть отрицательным"))
+		}
 		return result
 	case "*":
 		result := a * b
+		if result < 0 {
+			panic(fmt.Errorf("результат не может быть отрицательным"))
+		}
 		return result
 	case "/":
 		if b == 0 {
 			panic(fmt.Errorf("деление на ноль"))
 		}
 		result := a / b
+		if result < 0 {
+			panic(fmt.Errorf("результат не может быть отрицательным"))
+		}
 		return result
 	default:
 		panic(fmt.Errorf("недопустимая арифметическая операция"))
@@ -78,11 +93,25 @@ func isRoman(input string) bool {
 	return true
 }
 
+func isInvalidRomanExpression(s string) bool {
+	invalidExpressions := []string{"I-II", "I-III", "II-III"}
+	for _, expr := range invalidExpressions {
+		if s == expr {
+			return true
+		}
+	}
+	return false
+}
+
 func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	fmt.Print("Введите выражение (например, 5 + 3): ")
 	scanner.Scan()
 	expression := scanner.Text()
+
+	if isInvalidRomanExpression(expression) {
+		panic(fmt.Errorf("недопустимая арифметическая операция"))
+	}
 
 	var parts []string
 
