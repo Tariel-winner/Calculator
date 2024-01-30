@@ -1,5 +1,6 @@
 package main
-import  (
+
+import (
 	"bufio"
 	"fmt"
 	"os"
@@ -40,37 +41,37 @@ func romanToArabic(s string) (int, error) {
 	return result, nil
 }
 
-func calculate(a, b int, operator string) int {
+func calculate(a, b int, operator string) (int, error) {
 	switch operator {
 	case "+":
 		result := a + b
 		if result < 0 {
-			panic(fmt.Errorf("результат не может быть отрицательным"))
+			return 0, fmt.Errorf("результат не может быть отрицательным")
 		}
-		return result
+		return result, nil
 	case "-":
 		result := a - b
 		if result < 0 {
-			panic(fmt.Errorf("результат не может быть отрицательным"))
+			return 0, fmt.Errorf("результат не может быть отрицательным")
 		}
-		return result
+		return result, nil
 	case "*":
 		result := a * b
 		if result < 0 {
-			panic(fmt.Errorf("результат не может быть отрицательным"))
+			return 0, fmt.Errorf("результат не может быть отрицательным")
 		}
-		return result
+		return result, nil
 	case "/":
 		if b == 0 {
-			panic(fmt.Errorf("деление на ноль"))
+			return 0, fmt.Errorf("деление на ноль")
 		}
 		result := a / b
 		if result < 0 {
-			panic(fmt.Errorf("результат не может быть отрицательным"))
+			return 0, fmt.Errorf("результат не может быть отрицательным")
 		}
-		return result
+		return result, nil
 	default:
-		panic(fmt.Errorf("недопустимая арифметическая операция"))
+		return 0, fmt.Errorf("недопустимая арифметическая операция")
 	}
 }
 
@@ -153,7 +154,15 @@ func main() {
 		panic(fmt.Errorf("смешивание арабских и римских цифр в выражении"))
 	}
 
-	result := calculate(a, b, parts[1])
+	// Check if any operand is less than 1
+	if a < 1 || b < 1 {
+		panic(fmt.Errorf("операнд не может быть меньше 1"))
+	}
+
+	result, err := calculate(a, b, parts[1])
+	if err != nil {
+		panic(err)
+	}
 
 	// Check if the result should be displayed as Arabic or Roman numeral
 	if isArabic(parts[0]) && isArabic(parts[2]) {
